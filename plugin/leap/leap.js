@@ -30,14 +30,14 @@ var b=right.criteria;if(a!==b){if(a>b||a===void 0)return 1;if(a<b||b===void 0)re
       pointer     = document.createElement( 'div' ),
       config      = {
         autoCenter       : true,      // Center pointer around detected position.
-        gestureDelay     : 500,       // How long to delay between gestures.
+        gestureDelay     : 1000,       // How long to delay between gestures.
         naturalSwipe     : true,      // Swipe as if it were a touch screen.
         pointerColor     : '#00aaff', // Default color of the pointer.
-        pointerOpacity   : 0.7,       // Default opacity of the pointer.
+        pointerOpacity   : 0.3,       // Default opacity of the pointer.
         pointerSize      : 15,        // Default minimum height/width of the pointer.
         pointerTolerance : 120        // Bigger = slower pointer.
       },
-      entered, enteredPosition, now, size, tipPosition; // Other vars we need later, but don't need to redeclare.
+      entered, enteredPosition, now, size, tipPosition, lastPointingTime; // Other vars we need later, but don't need to redeclare.
 
       // Merge user defined settings with defaults
       if( leapConfig ) {
@@ -56,6 +56,7 @@ var b=right.criteria;if(a!==b){if(a>b||a===void 0)return 1;if(a<b||b===void 0)re
 
       body.appendChild( pointer );
 
+
   // Leap's loop
   controller.on( 'frame', function ( frame ) {
     // Timing code to rate limit gesture execution
@@ -63,48 +64,63 @@ var b=right.criteria;if(a!==b){if(a>b||a===void 0)return 1;if(a<b||b===void 0)re
 
     // Pointer: 1 to 2 fingers. Strictly one finger works but may cause innaccuracies.
     // The innaccuracies were observed on a development model and may not be an issue with consumer models.
-    if( frame.fingers.length > 0 && frame.fingers.length < 3 ) {
-      // Invert direction and multiply by 3 for greater effect.
-      size = -3 * frame.fingers[0].tipPosition[2];
+      if (frame.fingers.length > 0 && frame.fingers.length < 3 && frame.fingers[0].tipPosition[2] < -10)
+      {
+              // Invert direction and multiply by 3 for greater effect.
+              size = -3 * (frame.fingers[0].tipPosition[2] + 10);
 
-      if( size < config.pointerSize ) {
-        size = config.pointerSize;
+              console.log(frame.fingers[0].tipPosition[2]);
+
+              if (size < config.pointerSize) {
+                  size = config.pointerSize;
+              }
+
+              pointer.style.width = size + 'px';
+              pointer.style.height = size + 'px';
+              pointer.style.borderRadius = size - 5 + 'px';
+              pointer.style.visibility = 'visible';
+
+              if (config.autoCenter) {
+                  tipPosition = frame.fingers[0].tipPosition;
+
+                  // Check whether the finger has entered the z range of the Leap Motion. Used for the autoCenter option.
+                  if (!entered) {
+                      entered = true;
+                      enteredPosition = frame.fingers[0].tipPosition;
+                  }
+
+                  pointer.style.top =
+                      (-1 * (( tipPosition[1] - enteredPosition[1] ) * body.offsetHeight / config.pointerTolerance )) +
+                          ( body.offsetHeight / 2 ) + 'px';
+
+                  pointer.style.left =
+                      (( tipPosition[0] - enteredPosition[0] ) * body.offsetWidth / config.pointerTolerance ) +
+                          ( body.offsetWidth / 2 ) + 'px';
+              }
+              else {
+                  pointer.style.top = ( 1 - (( tipPosition[1] - 50) / config.pointerTolerance )) *
+                      body.offsetHeight + 'px';
+
+                  pointer.style.left = ( tipPosition[0] * body.offsetWidth / config.pointerTolerance ) +
+                      ( body.offsetWidth / 2 ) + 'px';
+              }
+              lastPointingTime = new Date().getTime();
       }
-
-      pointer.style.width        = size     + 'px';
-      pointer.style.height       = size     + 'px';
-      pointer.style.borderRadius = size - 5 + 'px';
-      pointer.style.visibility   = 'visible';
-
-      if( config.autoCenter ) {
-        tipPosition = frame.fingers[0].tipPosition;
-
-        // Check whether the finger has entered the z range of the Leap Motion. Used for the autoCenter option.
-        if( !entered ) {
-          entered         = true;
-          enteredPosition = frame.fingers[0].tipPosition;
-        }
-
-        pointer.style.top =
-          (-1 * (( tipPosition[1] - enteredPosition[1] ) * body.offsetHeight / config.pointerTolerance )) +
-            ( body.offsetHeight / 2 ) + 'px';
-
-        pointer.style.left =
-          (( tipPosition[0] - enteredPosition[0] ) * body.offsetWidth / config.pointerTolerance ) +
-            ( body.offsetWidth / 2 ) + 'px';
-      }
-      else {
-        pointer.style.top  = ( 1 - (( tipPosition[1] - 50) / config.pointerTolerance )) *
-          body.offsetHeight + 'px';
-
-        pointer.style.left = ( tipPosition[0] * body.offsetWidth / config.pointerTolerance ) +
-          ( body.offsetWidth / 2 ) + 'px';
-      }
-    }
     else {
-      // Hide pointer on exit
-      entered                  = false;
-      pointer.style.visibility = 'hidden';
+        // Hide pointer on exit
+        if (lastPointingTime === null || typeof(lastPointingTime) === "undefined") {
+            entered = false;
+            pointer.style.visibility = 'hidden';
+            lastPointingTime = null;
+        }
+        else {
+            var diff = new Date().getTime() - lastPointingTime;
+            if (diff > 500) {
+                entered = false;
+                pointer.style.visibility = 'hidden';
+                lastPointingTime = null;
+            }
+        }
     }
 
     // Gestures
