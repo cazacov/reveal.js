@@ -49,6 +49,9 @@
                     <p>
                         <small>Presented by Victor Cazacov (vic)</small>
                     </p>
+                    <p>
+                        <small>21.03.2014</small>
+                    </p>
                 </section>
                 <section>
                     <h1>What's wrong with JavaScript?</h1>
@@ -175,18 +178,20 @@ for (_k = 0, _len2 = foods.length; _k < _len2; _k++) {
                     </section>
                     <section>
                         <h1>
-                            Functions
+                            JavaScript Functions
                         </h1>
+                        <h2>define</h2>
                         <ul>
-                            <li>Namespace</li>
-                            <li>Class</li>
+                            <li>Namespaces</li>
+                            <li>Classes</li>
                             <li>Encapsulation of private members</li>
-                            <li>Variable scope</li>
+                            <li>Scope of variables</li>
                             <li>Delegates/callbacks/lambda expressions</li>
                             <li>Functions!</li>
                         </ul>
                     </section>
                     <section>
+                        <section>
                         <h1>
                             Coding patterns
                         </h1>
@@ -200,6 +205,21 @@ for (_k = 0, _len2 = foods.length; _k < _len2; _k++) {
                         <br/>
                         <br/>
                         <a href="http://pluralsight.com/training/courses/TableOfContents?courseName=structuring-javascript">"Structuring JavaScript Code" at Pluralsight</a>
+                        </section>
+                        <section>
+                            <h2>Module Pattern Example</h2>
+                            <pre><code>var calculator = function(diplayControl) {
+    // private members
+    var ctrlDisplay = document.getElementById(diplayControl);
+
+    return { // expose public members
+        add: function(x,y) {
+            var val = x + y;
+            ctrlDisplay.innerHtml = val;
+        }
+    };
+};</code></pre>
+                        </section>
                     </section>
                     <section>
                         <h1>
@@ -265,7 +285,7 @@ for (_k = 0, _len2 = foods.length; _k < _len2; _k++) {
                     </ul>
                 </section>
                 <section>
-                    <h2>Summary</h2>
+                    <h1>Summary</h1>
                     <br />
                     <h3>Language</h3>
                     <p>
@@ -296,23 +316,23 @@ for (_k = 0, _len2 = foods.length; _k < _len2; _k++) {
                     <h1>Next steps</h1>
                     <br />
                     <p>
-                        <a href="http://eloquentjavascript.net/">Eloquent JavaScript</a>
+                        <a href="http://eloquentjavascript.net/">Book: Eloquent JavaScript</a>
                     </p>
                     <p>
                         <a href="http://javascript.crockford.com">Douglas Crockford's site</a>
                     </p>
                     <p>
-                        <a href="http://addyosmani.com/resources/essentialjsdesignpatterns/book/">Learning JavaScript Design Patterns</a>
+                        <a href="http://addyosmani.com/resources/essentialjsdesignpatterns/book/">Book: Learning JavaScript Design Patterns</a>
                     </p>
 
                     <p>
-                        <a href="http://pluralsight.com/">Pluralsight</a>
+                        <a href="http://pluralsight.com/">Pluralsight trainings</a>
                     </p>
                     <p>
                         <a href="http://www.munichjs.org/">JavaScript User Group Munich</a>
                     </p>
                     <p>
-                        <a href="http://www.enterjs.de/">EnterJS conference&nbsp;&nbsp;&nbsp;&nbsp;/* Köln 30. Juni bis 2. Juli 2014 */</a>
+                        <a href="http://www.enterjs.de/">EnterJS Conference&nbsp;&nbsp;&nbsp;&nbsp;/* Köln 30. Juni bis 2. Juli 2014 */</a>
                     </p>
                 </section>
 				<section>
@@ -332,7 +352,7 @@ for (_k = 0, _len2 = foods.length; _k < _len2; _k++) {
 			// https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
 				controls: true,
-				progress: true,
+				progress: false,
 				history: true,
 				center: true,
                 width: 1280,
